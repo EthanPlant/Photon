@@ -1,0 +1,15 @@
+[package]
+name = "kernel"
+version = "0.0.1"
+edition = "2024"
+
+[[bin]]
+name = "kernel"
+test = false
+bench = false
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
