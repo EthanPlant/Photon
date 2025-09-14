@@ -20,8 +20,6 @@ endif
 
 .PHONY: all
 all:
-	# ...existing code...
-all:
 	RUSTFLAGS="-C relocation-model=static" cargo build --target $(RUST_TARGET) --profile $(RUST_PROFILE)
 	cp $$(find target/$(RUST_TARGET)/$(RUST_SUBDIR) -type f -perm -111 | head -n 1) kernel
 
@@ -29,3 +27,8 @@ all:
 clean:
 	cargo clean
 	rm -rf kernel
+
+.PHONY: check
+check:
+	RUSTFLAGS="-Dwarnings" cargo check --target $(RUST_TARGET)
+	RUSTFLAGS="-Dwarnings" cargo clippy --target $(RUST_TARGET)

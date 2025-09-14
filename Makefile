@@ -20,6 +20,10 @@ clean:
 	$(MAKE) -C kernel clean
 	rm -rf iso_root $(IMAGE_NAME).iso
 
+.PHONY: check
+check:
+	$(MAKE) -C kernel check
+
 .PHONY: run-x86_64
 run-x86_64: ovmf/ovmf-code-x86_64.fd ovmf/ovmf-vars-x86_64.fd $(IMAGE_NAME).iso
 	qemu-system-$(KARCH) \
