@@ -108,7 +108,7 @@ pub fn init() {
         addr_of!(GDT) as u64,
     );
 
-    log::debug!("GDT Descriptor: {descriptor:?}");
+    log::debug!("GDT Descriptor: {descriptor:x?}");
 
     // Safety: The GDT is valid
     unsafe {

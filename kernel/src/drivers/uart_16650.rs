@@ -82,7 +82,7 @@ impl<S: SerialStatus> SerialPort<S> {
     /// The caller must ensure that the port address and register are valid for writing.
     /// Also, writing to certain registers may have side effects.
     unsafe fn write_reg(&self, reg: u8, data: u8) {
-        unsafe { arch::io::outb(self.port + reg as u16, data) };
+        unsafe { arch::io::outb(self.port + u16::from(reg), data) };
     }
 
     /// Read a value from a register of the serial port.
@@ -92,7 +92,7 @@ impl<S: SerialStatus> SerialPort<S> {
     /// The caller must ensure that the port address and register are valid for reading.
     /// Also, reading from certain registers may have side effects.
     unsafe fn read_reg(&self, reg: u8) -> u8 {
-        unsafe { arch::io::inb(self.port + reg as u16) }
+        unsafe { arch::io::inb(self.port + u16::from(reg)) }
     }
 }
 
