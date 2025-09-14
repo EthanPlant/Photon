@@ -22,8 +22,15 @@ static _START_MARKER: RequestsStartMarker = RequestsStartMarker::new();
 #[unsafe(link_section = ".requests_end_marker")]
 static _END_MARKER: RequestsEndMarker = RequestsEndMarker::new();
 
-#[unsafe(no_mangle)]
-pub extern "C" fn _start() -> ! {
+mod arch;
+mod drivers;
+
+/// Kernel main function.
+///
+/// This function is called after the architecture-specific
+/// initialization is complete to perform non-architecture-specific
+/// setup and enter the main kernel loop.
+pub fn kmain() -> ! {
     assert!(BASE_REVISION.is_supported());
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response() {
@@ -45,10 +52,14 @@ pub extern "C" fn _start() -> ! {
         }
     }
 
-    loop {}
+    arch::halt()
 }
 
+/// Panic handler for the kernel.
+///
+/// This function is called when a panic occurs in the kernel.
+/// It halts the CPU to prevent further execution.
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
+    arch::halt()
 }
