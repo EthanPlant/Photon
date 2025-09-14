@@ -69,6 +69,7 @@ pub fn kmain() -> ! {
 /// This function is called when a panic occurs in the kernel.
 /// It halts the CPU to prevent further execution.
 #[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    log::error!("KERNEL PANIC: {} - {}", info.location().unwrap(), info.message());
     arch::halt()
 }

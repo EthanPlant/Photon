@@ -113,7 +113,6 @@ pub fn init() {
     // Safety: The GDT is valid
     unsafe {
         load_gdt(&descriptor);
-        log::debug!("GDT Loaded");
 
         load_cs(KERNEL_CODE_SELECTOR);
         load_ds(KERNEL_DATA_SELECTOR);
