@@ -1,13 +1,23 @@
 use crate::{drivers, logger};
 
+mod gdt;
 pub mod io;
 
-/// Entry point for x86_64 architecture.
+#[derive(Debug, Clone, Copy)]
+#[allow(dead_code)] // TODO: Replace this once we start supporting usermode
+enum PrivilegeLevel {
+    Kernel = 0,
+    User = 3,
+}
+
+/// Entry point for `x86_64` architecture.
 #[unsafe(no_mangle)]
 pub extern "C" fn x86_64_main() -> ! {
     drivers::uart::init();
     logger::init();
     log::debug!("Serial logger initialized!");
+    gdt::init();
+    log::debug!("GDT... OK!");
     crate::kmain()
 }
 
