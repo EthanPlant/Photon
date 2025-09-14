@@ -4,7 +4,7 @@ use crate::arch::x86_64::PrivilegeLevel;
 
 const GDT_ENTRIES: usize = 3;
 
-const KERNEL_CODE_SELECTOR: SegmentSelector = SegmentSelector::new(1, PrivilegeLevel::Kernel);
+pub const KERNEL_CODE_SELECTOR: SegmentSelector = SegmentSelector::new(1, PrivilegeLevel::Kernel);
 const KERNEL_DATA_SELECTOR: SegmentSelector = SegmentSelector::new(2, PrivilegeLevel::Kernel);
 
 // We need to specify to the linker that this should be in the `.data` segment
@@ -91,7 +91,7 @@ impl GdtDescriptor {
 
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone)]
-struct SegmentSelector(u16);
+pub struct SegmentSelector(u16);
 
 impl SegmentSelector {
     const fn new(index: u16, privilege: PrivilegeLevel) -> Self {

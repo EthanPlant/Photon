@@ -61,6 +61,8 @@ pub fn kmain() -> ! {
         }
     }
 
+    arch::enable_interrupts();
+
     arch::halt()
 }
 
@@ -70,6 +72,10 @@ pub fn kmain() -> ! {
 /// It halts the CPU to prevent further execution.
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
-    log::error!("KERNEL PANIC: {} - {}", info.location().unwrap(), info.message());
+    log::error!(
+        "KERNEL PANIC: {} - {}",
+        info.location().unwrap(),
+        info.message()
+    );
     arch::halt()
 }

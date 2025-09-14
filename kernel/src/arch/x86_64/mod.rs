@@ -1,7 +1,10 @@
 use crate::{drivers, logger};
 
 mod gdt;
+mod interrupts;
 pub mod io;
+
+pub use interrupts::{disable_interrupts, enable_interrupts};
 
 #[derive(Debug, Clone, Copy)]
 #[allow(dead_code)] // TODO: Replace this once we start supporting usermode
@@ -13,11 +16,18 @@ enum PrivilegeLevel {
 /// Entry point for `x86_64` architecture.
 #[unsafe(no_mangle)]
 pub extern "C" fn x86_64_main() -> ! {
+    // We want to ensure no interrupt fires until we've finished initializing
+    disable_interrupts();
+
     drivers::uart::init();
     logger::init();
     log::debug!("Serial logger initialized!");
+
     gdt::init();
     log::debug!("GDT... OK!");
+
+    interrupts::idt::init();
+
     crate::kmain()
 }
 
