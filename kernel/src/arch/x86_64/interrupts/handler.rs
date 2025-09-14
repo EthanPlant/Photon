@@ -181,7 +181,7 @@ macro_rules! interrupt_error {
                 $crate::push_preserved!(),
                 "mov rsi, [rsp + {rax_offset}];",
                 "mov [rsp + {rax_offset}], rax;",
-                "mov rdi, rsp;"
+                "mov rdi, rsp;",
                 "call {inner}",
                 $crate::pop_preserved!(),
                 $crate::pop_scratch!(),

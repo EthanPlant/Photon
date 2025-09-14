@@ -29,7 +29,6 @@ pub extern "C" fn x86_64_main() -> ! {
     interrupts::idt::init();
     register_exceptions();
 
-
     crate::kmain()
 }
 
