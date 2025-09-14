@@ -1,7 +1,7 @@
-use crate::{drivers, logger};
+use crate::{arch::interrupts::exceptions::register_exceptions, drivers, logger};
 
 mod gdt;
-mod interrupts;
+pub mod interrupts;
 pub mod io;
 
 pub use interrupts::{disable_interrupts, enable_interrupts};
@@ -27,6 +27,8 @@ pub extern "C" fn x86_64_main() -> ! {
     log::debug!("GDT... OK!");
 
     interrupts::idt::init();
+    register_exceptions();
+
 
     crate::kmain()
 }

@@ -2,9 +2,12 @@ use core::{arch::asm, ptr::addr_of};
 
 use spin::Mutex;
 
-use crate::arch::x86_64::{
-    PrivilegeLevel,
-    gdt::{KERNEL_CODE_SELECTOR, SegmentSelector},
+use crate::arch::{
+    interrupts::handler::HandlerFunc,
+    x86_64::{
+        PrivilegeLevel,
+        gdt::{KERNEL_CODE_SELECTOR, SegmentSelector},
+    },
 };
 
 const INTERRUPT_GATE: u8 = 0x0e;
@@ -23,6 +26,12 @@ impl Idt {
     const fn new() -> Self {
         Self {
             entries: [IdtEntry::EMPTY; IDT_ENTRIES],
+        }
+    }
+
+    pub unsafe fn set_handler(&mut self, index: usize, handler: HandlerFunc) {
+        unsafe {
+            self.entries[index].set_handler(handler);
         }
     }
 }
@@ -95,6 +104,15 @@ impl IdtEntry {
             offset_high: (offset >> 32) as u32,
             reserved: 0,
         }
+    }
+
+    #[allow(clippy::cast_possible_truncation)]
+    pub unsafe fn set_handler(&mut self, func: HandlerFunc) {
+        let func_ptr = func as usize;
+
+        self.offset_low = func_ptr as u16;
+        self.offset_middle = (func_ptr >> 16) as u16;
+        self.offset_high = (func_ptr >> 32) as u32;
     }
 }
 
