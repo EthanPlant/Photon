@@ -13,3 +13,6 @@ panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+[dependencies]
+limine = "0.5.0"
