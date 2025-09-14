@@ -1,4 +1,4 @@
-use crate::{drivers, kmain, serial_println};
+use crate::{drivers, logger};
 
 pub mod io;
 
@@ -6,8 +6,9 @@ pub mod io;
 #[unsafe(no_mangle)]
 pub extern "C" fn x86_64_main() -> ! {
     drivers::uart::init();
-    serial_println!("Hello, world!");
-    kmain()
+    logger::init();
+    log::debug!("Serial logger initialized!");
+    crate::kmain()
 }
 
 /// Halt the CPU indefinitely.

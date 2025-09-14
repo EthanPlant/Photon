@@ -17,4 +17,5 @@ panic = "abort"
 [dependencies]
 bitflags = "2.9.4"
 limine = "0.5.0"
+log = "0.4.28"
 spin = { version = "0.10.0", default-features = false, features = ["once", "spin_mutex"] }

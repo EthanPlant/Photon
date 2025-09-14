@@ -24,6 +24,7 @@ static _END_MARKER: RequestsEndMarker = RequestsEndMarker::new();
 
 mod arch;
 mod drivers;
+mod logger;
 
 /// Kernel main function.
 ///
@@ -31,6 +32,7 @@ mod drivers;
 /// initialization is complete to perform non-architecture-specific
 /// setup and enter the main kernel loop.
 pub fn kmain() -> ! {
+    log::debug!("Dropped into kmain!");
     assert!(BASE_REVISION.is_supported());
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response() {
