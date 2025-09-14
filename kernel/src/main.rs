@@ -4,12 +4,18 @@
 
 use limine::{
     BaseRevision,
-    request::{FramebufferRequest, RequestsEndMarker, RequestsStartMarker},
+    request::{FramebufferRequest, MemoryMapRequest, RequestsEndMarker, RequestsStartMarker},
 };
+
+use crate::memory::mem_map::parse_mem_map;
 
 #[used]
 #[unsafe(link_section = ".requests")]
 static BASE_REVISION: BaseRevision = BaseRevision::with_revision(2);
+
+#[used]
+#[unsafe(link_section = ".requests")]
+static MEM_MAP_REQUEST: MemoryMapRequest = MemoryMapRequest::new();
 
 #[used]
 #[unsafe(link_section = ".requests")]
@@ -26,6 +32,7 @@ static _END_MARKER: RequestsEndMarker = RequestsEndMarker::new();
 mod arch;
 mod drivers;
 mod logger;
+mod memory;
 
 /// Kernel main function.
 ///
@@ -39,6 +46,8 @@ mod logger;
 pub fn kmain() -> ! {
     log::debug!("Dropped into kmain!");
     assert!(BASE_REVISION.is_supported());
+
+    parse_mem_map(MEM_MAP_REQUEST.get_response().unwrap());
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response()
         && let Some(framebuffer) = framebuffer_response.framebuffers().next()
