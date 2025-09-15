@@ -1,4 +1,6 @@
-#[derive(Debug, Copy, Clone)]
+use crate::memory::addr::PhysAddr;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum EntryType {
     Free,
     Reserved,
@@ -26,26 +28,41 @@ impl From<limine::memory_map::EntryType> for EntryType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct MemoryMapEntry {
-    base: u64,
+    base: PhysAddr,
     length: u64,
     entry_type: EntryType,
+}
+
+impl MemoryMapEntry {
+    pub const fn zeroed() -> Self {
+        Self {
+            base: PhysAddr::null(),
+            length: 0,
+            entry_type: EntryType::Reserved,
+        }
+    }
+
+    pub fn base(&self) -> PhysAddr {
+        self.base
+    }
+
+    pub fn len(&self) -> u64 {
+        self.length
+    }
+
+    pub fn entry_type(&self) -> EntryType {
+        self.entry_type
+    }
 }
 
 impl From<limine::memory_map::Entry> for MemoryMapEntry {
     fn from(value: limine::memory_map::Entry) -> Self {
         Self {
-            base: value.base,
+            base: PhysAddr::new(value.base),
             length: value.length,
             entry_type: value.entry_type.into(),
         }
-    }
-}
-
-pub fn parse_mem_map(mem_map_resp: &limine::response::MemoryMapResponse) {
-    for entry in mem_map_resp.entries() {
-        let entry = MemoryMapEntry::from(**entry);
-        log::debug!("Memory Map Entry: {entry:?}");
     }
 }

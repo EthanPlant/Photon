@@ -1,5 +1,6 @@
 #![no_std]
 #![no_main]
+#![feature(step_trait)]
 #![warn(clippy::pedantic)]
 
 use limine::{
@@ -7,7 +8,7 @@ use limine::{
     request::{FramebufferRequest, MemoryMapRequest, RequestsEndMarker, RequestsStartMarker},
 };
 
-use crate::memory::mem_map::parse_mem_map;
+use crate::memory::frame_allocator::{BumpFrameAllocator, FrameAllocator};
 
 #[used]
 #[unsafe(link_section = ".requests")]
@@ -47,7 +48,21 @@ pub fn kmain() -> ! {
     log::debug!("Dropped into kmain!");
     assert!(BASE_REVISION.is_supported());
 
-    parse_mem_map(MEM_MAP_REQUEST.get_response().unwrap());
+    let mut frame_allocator: BumpFrameAllocator = BumpFrameAllocator::init(
+        MEM_MAP_REQUEST
+            .get_response()
+            .expect("Should have recieved mem map response from Limine"),
+    );
+    let frame = frame_allocator.allocate_frame().unwrap();
+    log::debug!("Allocated frame: {frame:?}");
+    let frame = frame_allocator.allocate_frame().unwrap();
+    log::debug!("Allocated frame: {frame:?}");
+    let frame = frame_allocator.allocate_frame().unwrap();
+    log::debug!("Allocated frame: {frame:?}");
+
+    unsafe {
+        frame_allocator.deallocate_frame(frame);
+    }
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response()
         && let Some(framebuffer) = framebuffer_response.framebuffers().next()
