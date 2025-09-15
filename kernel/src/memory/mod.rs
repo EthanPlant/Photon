@@ -1,5 +1,10 @@
-pub mod addr;
-mod bootstrap;
-mod frame;
-pub mod frame_allocator;
+//! Memory management module.
+//!
+//! This module provides abstractions and utilities for managing physical and virtual memory
+//! within the kernel. It includes memory mapping, allocation, and other low-level memory
+//! operations required for kernel functionality.
+//!
+//! Submodules:
+//! - [`mem_map`]: Handles memory mapping and related operations.
+
 pub mod mem_map;

@@ -12,8 +12,6 @@ use limine::{
     },
 };
 
-use crate::memory::frame_allocator::{BumpFrameAllocator, FrameAllocator};
-
 extern crate alloc;
 
 #[used]
@@ -63,22 +61,6 @@ mod memory;
 pub fn kmain() -> ! {
     log::debug!("Dropped into kmain!");
     assert!(BASE_REVISION.is_supported());
-
-    let mut frame_allocator: BumpFrameAllocator = BumpFrameAllocator::init(
-        MEM_MAP_REQUEST
-            .get_response()
-            .expect("Should have recieved mem map response from Limine"),
-    );
-    let frame = frame_allocator.allocate_frame().unwrap();
-    log::debug!("Allocated frame: {frame:?}");
-    let frame = frame_allocator.allocate_frame().unwrap();
-    log::debug!("Allocated frame: {frame:?}");
-    let frame = frame_allocator.allocate_frame().unwrap();
-    log::debug!("Allocated frame: {frame:?}");
-
-    unsafe {
-        frame_allocator.deallocate_frame(frame);
-    }
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response()
         && let Some(framebuffer) = framebuffer_response.framebuffers().next()
