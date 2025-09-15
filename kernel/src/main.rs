@@ -1,14 +1,20 @@
 #![no_std]
 #![no_main]
 #![feature(step_trait)]
+#![feature(allocator_api)]
 #![warn(clippy::pedantic)]
 
+use dummy_alloc::DummyAllocator;
 use limine::{
     BaseRevision,
-    request::{FramebufferRequest, MemoryMapRequest, RequestsEndMarker, RequestsStartMarker},
+    request::{
+        FramebufferRequest, HhdmRequest, MemoryMapRequest, RequestsEndMarker, RequestsStartMarker,
+    },
 };
 
 use crate::memory::frame_allocator::{BumpFrameAllocator, FrameAllocator};
+
+extern crate alloc;
 
 #[used]
 #[unsafe(link_section = ".requests")]
@@ -17,6 +23,10 @@ static BASE_REVISION: BaseRevision = BaseRevision::with_revision(2);
 #[used]
 #[unsafe(link_section = ".requests")]
 static MEM_MAP_REQUEST: MemoryMapRequest = MemoryMapRequest::new();
+
+#[used]
+#[unsafe(link_section = ".requests")]
+static HHDM_REQUEST: HhdmRequest = HhdmRequest::new();
 
 #[used]
 #[unsafe(link_section = ".requests")]
@@ -29,6 +39,12 @@ static _START_MARKER: RequestsStartMarker = RequestsStartMarker::new();
 #[used]
 #[unsafe(link_section = ".requests_end_marker")]
 static _END_MARKER: RequestsEndMarker = RequestsEndMarker::new();
+
+/// We need the `alloc` crate for the bootstrap allocator which requires a global allocator to be defined.
+/// Since we don't have a heap allocator yet, we just use [`DummyAllocator`](dummy_alloc::DummyAllocator)
+/// for now.
+#[global_allocator]
+static GLOBAL_ALLOC: DummyAllocator = DummyAllocator;
 
 mod arch;
 mod drivers;

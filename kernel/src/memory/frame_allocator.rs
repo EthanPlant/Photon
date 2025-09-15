@@ -45,7 +45,7 @@ impl<S: FrameSize> BumpFrameAllocator<S> {
         self.mem_map
             .iter()
             .filter(|entry| entry.entry_type() == EntryType::Free)
-            .map(|range| range.base()..range.base() + range.len())
+            .map(|range| range.base..range.base + range.length)
             .flat_map(|range| range.step_by(S::SIZE as usize))
             .map(Frame::containing_addr)
     }

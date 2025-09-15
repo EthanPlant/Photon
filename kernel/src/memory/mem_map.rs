@@ -30,8 +30,8 @@ impl From<limine::memory_map::EntryType> for EntryType {
 
 #[derive(Debug, Clone, Copy)]
 pub struct MemoryMapEntry {
-    base: PhysAddr,
-    length: u64,
+    pub base: PhysAddr,
+    pub length: u64,
     entry_type: EntryType,
 }
 
@@ -42,14 +42,6 @@ impl MemoryMapEntry {
             length: 0,
             entry_type: EntryType::Reserved,
         }
-    }
-
-    pub fn base(&self) -> PhysAddr {
-        self.base
-    }
-
-    pub fn len(&self) -> u64 {
-        self.length
     }
 
     pub fn entry_type(&self) -> EntryType {
