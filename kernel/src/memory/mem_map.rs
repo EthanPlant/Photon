@@ -42,7 +42,7 @@ unsafe impl Sync for MemMap {}
 /// in the memory map initialized by [`init`].
 ///
 /// # Panics
-/// 
+///
 /// Panics if the memory map has not been initialized via [`init`].
 pub fn mmap_iter() -> impl Iterator<Item = limine::memory_map::Entry> {
     let mem_map = MEM_MAP.get().expect("Memory map is initialized");
@@ -56,11 +56,7 @@ pub fn mmap_iter() -> impl Iterator<Item = limine::memory_map::Entry> {
 ///
 /// This function must be called exactly once during kernel initialization, before any
 /// calls to [`mmap_iter`]. It stores the memory map metadata and a pointer to the entries
-/// for later access.
-///
-/// # Panics
-///
-/// This function will panic if the memory map has already been initialized.
+/// for later access. If the memory map has already been initialized this function does nothing
 pub fn init(mem_map: &limine::response::MemoryMapResponse) {
     let entry_size = mem::size_of::<limine::memory_map::Entry>();
     let size = entry_size * mem_map.entries().len();

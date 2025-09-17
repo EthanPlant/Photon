@@ -5,6 +5,10 @@
 //! operations required for kernel functionality.
 //!
 //! Submodules:
+//! - [`addr`]: Abstraction around physical and virtual addresses
+//! - [`frame_allocator`] - Handles allocating and deallocating frames of physical memory.
 //! - [`mem_map`]: Handles memory mapping and related operations.
 
+mod addr;
+pub mod frame_allocator;
 pub mod mem_map;

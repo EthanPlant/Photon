@@ -1,4 +1,6 @@
-use crate::{arch::interrupts::exceptions::register_exceptions, drivers, logger};
+use crate::{
+    arch::interrupts::exceptions::register_exceptions, drivers, logger, memory::frame_allocator,
+};
 
 mod gdt;
 pub mod interrupts;
@@ -28,6 +30,9 @@ pub extern "C" fn x86_64_main() -> ! {
 
     interrupts::idt::init();
     register_exceptions();
+
+    frame_allocator::init();
+    log::debug!("Registered memory map and initialized physical frame allocator");
 
     crate::kmain()
 }

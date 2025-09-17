@@ -12,6 +12,8 @@ use limine::{
     },
 };
 
+use crate::memory::frame_allocator::{FrameAllocator, frame_allocator};
+
 extern crate alloc;
 
 #[used]
@@ -82,6 +84,14 @@ pub fn kmain() -> ! {
             };
         }
     }
+
+    let frame = frame_allocator().allocate_frame();
+    log::info!("Allocated frame {frame:?}");
+    let frame = frame_allocator().allocate_frame();
+    log::info!("Allocated frame {frame:?}");
+    let frame = frame_allocator().allocate_frame();
+    log::info!("Allocated frame {frame:?}");
+    frame.unwrap();
 
     arch::enable_interrupts();
 
