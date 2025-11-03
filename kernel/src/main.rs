@@ -91,7 +91,10 @@ pub fn kmain() -> ! {
     log::info!("Allocated frame {frame:?}");
     let frame = frame_allocator().allocate_frame();
     log::info!("Allocated frame {frame:?}");
-    frame.unwrap();
+    let frame = frame.unwrap();
+
+    let virt = frame.start_addr().as_hhdm();
+    log::info!("Frame virtual address in HHDM: {virt:?}");
 
     arch::enable_interrupts();
 

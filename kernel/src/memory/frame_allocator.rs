@@ -90,7 +90,7 @@ impl<S: FrameSize> Frame<S> {
     }
 
     // Returns the starting physical address of this frame.
-    fn start_addr(&self) -> PhysAddr {
+    pub fn start_addr(&self) -> PhysAddr {
         self.start_addr
     }
 }

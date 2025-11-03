@@ -5,12 +5,19 @@
 //! The purpose of these types is to prevent accidental mixing of address spaces,
 //! enforce proper alignment, and provide utilities for memory management.
 
+use spin::Lazy;
+
+use crate::HHDM_REQUEST;
+
 /// Represents errors that can occur when manipulating memory addresses.
 #[derive(Debug, Clone, Copy)]
 pub enum AddrError {
     /// The requested alignment is invalid (alignment must be a power of two).
     InvalidAlignment,
 }
+
+static HHDM_OFFSET: Lazy<VirtAddr> =
+    Lazy::new(|| VirtAddr::new(HHDM_REQUEST.get_response().unwrap().offset()));
 
 /// A type-safe wrapper around a 64-bit **physical memory address**.
 ///
@@ -40,11 +47,36 @@ impl PhysAddr {
             Ok(Self((self.0 | mask) + 1))
         }
     }
+
+    /// Convert this physical address to a virtual address in the Higher Half Direct Map (HHDM).
+    ///
+    /// This adds the HHDM offset from Limine to the physical address to obtain the corresponding virtual address.
+    pub fn as_hhdm(self) -> VirtAddr {
+        VirtAddr(self.0 + HHDM_OFFSET.0)
+    }
 }
 
 impl core::fmt::Debug for PhysAddr {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_tuple("PhysAddr")
+            .field(&format_args!("{:x}", self.0))
+            .finish()
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct VirtAddr(u64);
+
+impl VirtAddr {
+    // Create a new `VirtAddr` from a raw `u64`.
+    pub fn new(addr: u64) -> Self {
+        Self(addr)
+    }
+}
+
+impl core::fmt::Debug for VirtAddr {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("VirtAddr")
             .field(&format_args!("{:x}", self.0))
             .finish()
     }
